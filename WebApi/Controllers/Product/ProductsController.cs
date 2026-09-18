@@ -25,9 +25,13 @@ namespace WebApi.Controllers.Product
             _mediator = mediator;
         }
         [HttpGet]
-        public async Task<IActionResult> GetProducts(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetProducts(
+            [FromQuery] string? searchTerm,
+            [FromQuery(Name = "search")] string? search,
+            CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new GetAllProductsQuery(), cancellationToken));
+            var productSearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? search : searchTerm;
+            return Ok(await _mediator.Send(new GetAllProductsQuery(productSearchTerm), cancellationToken));
 
         }
         [HttpGet("GetAllAddProduct")]

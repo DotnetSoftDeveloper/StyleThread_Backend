@@ -10,5 +10,6 @@ namespace Application.Interfaces.IRepository
     public interface IProductRepository : IRepository<Product>
     {
         public Task<IEnumerable<Product>> GetAllWithVariantsAndSizesAsync(CancellationToken cancellationToken);
+        public Task<IEnumerable<Product>> SearchWithVariantsAndSizesAsync(string searchTerm, CancellationToken cancellationToken);
     }
 }

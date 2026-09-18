@@ -76,6 +76,7 @@ namespace WebApi
                     options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
 
+                app.UseRouting();
 
                 app.UseAuthentication(); // Must come before Authorization
 

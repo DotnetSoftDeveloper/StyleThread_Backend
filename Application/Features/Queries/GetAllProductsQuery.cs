@@ -12,8 +12,10 @@ using static Application.DTO.Auth;
 
 namespace Application.Features.Queries
 {
-    public class GetAllProductsQuery : IRequest<GenericResponse<IEnumerable<ProductDto>>>
+    public class GetAllProductsQuery(string? searchTerm = null) : IRequest<GenericResponse<IEnumerable<ProductDto>>>
     {
+        public string? SearchTerm { get; } = searchTerm;
+
         internal class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, GenericResponse<IEnumerable<ProductDto>>>
         {
             private readonly IUnitOfWork _unitOfWork;
@@ -27,8 +29,10 @@ namespace Application.Features.Queries
 
             public async Task<GenericResponse<IEnumerable<ProductDto>>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
             {
-                // Fetch all products along with their variants and sizes in a single optimized query
-                var productData = await _unitOfWork.productRepository.GetAllWithVariantsAndSizesAsync(cancellationToken);
+                var searchTerm = request.SearchTerm?.Trim();
+                var productData = string.IsNullOrWhiteSpace(searchTerm)
+                    ? await _unitOfWork.productRepository.GetAllWithVariantsAndSizesAsync(cancellationToken)
+                    : await _unitOfWork.productRepository.SearchWithVariantsAndSizesAsync(searchTerm, cancellationToken);
                 var sizeData = await _unitOfWork.sizeRepository.GetAllAsync(cancellationToken);
 
                 // Create a dictionary for quick lookup of sizes

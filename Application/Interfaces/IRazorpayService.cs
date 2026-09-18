@@ -11,5 +11,7 @@ namespace Application.Interfaces
     public interface IRazorpayService
     {
         Task<RazorpayPaymentLinkResponse> CreatePaymentLinkAsync(RazorpayPaymentLinkRequest paymentLinkRequest);
+        Task<RazorpayOrderResponseDTO> CreateOrderAsync(RazorpayOrderRequestDTO request, CancellationToken cancellationToken = default);
+        bool VerifyPaymentSignature(RazorpayPaymentVerificationRequestDTO request);
     }
 }
