@@ -20,6 +20,7 @@ namespace InfraStructure.Context
         public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<ProductVariantSize> ProductVariantSizes { get; set; }
         public DbSet<Customer> Customer { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Brand> Brand { get; set; }
         public DbSet<Order> Order { get; set; }
@@ -59,6 +60,18 @@ namespace InfraStructure.Context
                 .WithMany(pv => pv.ProductVariantSizes)
                 .HasForeignKey(pvs => pvs.ProductVariantId)
                 .OnDelete(DeleteBehavior.Cascade); // Ensure cascading delete is handled correctly
+
+            modelBuilder.Entity<CustomerAddress>()
+                .HasKey(address => address.CustomerAddressId);
+
+            modelBuilder.Entity<CustomerAddress>()
+                .HasOne(address => address.Customer)
+                .WithMany(customer => customer.CustomerAddresses)
+                .HasForeignKey(address => address.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CustomerAddress>()
+                .HasIndex(address => new { address.CustomerId, address.IsDefault });
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.Entity<Sleeve>().HasData(SeedData.GetSleeves());
