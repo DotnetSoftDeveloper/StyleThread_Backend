@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InfraStructure\InfraStructure.csproj" />
-    <ProjectReference Include="..\Presistance\Presistance.csproj" />
   </ItemGroup>
 
 </Project>

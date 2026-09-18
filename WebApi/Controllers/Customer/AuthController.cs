@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using static Application.DTO.Auth;
 
 namespace WebApi.Controllers.Product
@@ -46,6 +47,42 @@ namespace WebApi.Controllers.Product
         {
             return Ok(await _mediator.Send(userCredentials, cancellationToken));
         }
+
+        [Authorize]
+        [HttpGet("Me")]
+        public async Task<IActionResult> GetCurrentCustomer(CancellationToken cancellationToken)
+        {
+            var customerId = GetCurrentCustomerId();
+            if (customerId == null)
+            {
+                return Unauthorized(new GenericResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid session. Please sign in again."
+                });
+            }
+
+            return Ok(await _mediator.Send(new GetCustomerProfileQuery(customerId.Value), cancellationToken));
+        }
+
+        [Authorize(Roles = "Visitor")]
+        [HttpPut("me")]
+        public async Task<IActionResult> UpdateCurrentCustomer([FromBody] CustomerDto customerDto, CancellationToken cancellationToken)
+        {
+            var customerId = GetCurrentCustomerId();
+            if (customerId == null)
+            {
+                return Unauthorized(new GenericResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid session. Please sign in again."
+                });
+            }
+
+            customerDto.CustomerId = customerId.Value;
+            return Ok(await _mediator.Send(new GenericUpdateCommand<CustomerDto, GenericResponse<string>>(customerDto), cancellationToken));
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetCustomer(CancellationToken cancellationToken)
@@ -87,5 +124,13 @@ namespace WebApi.Controllers.Product
         [HttpPost("ResendOtp")]
         public async Task<IActionResult> ResendConfirmation(ResendConfirmationEmailCommand command) =>
             Ok(await _mediator.Send(command));
+
+        private int? GetCurrentCustomerId()
+        {
+            var customerIdValue = User.FindFirst("userId")?.Value
+                ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return int.TryParse(customerIdValue, out var customerId) ? customerId : null;
+        }
     }
 }

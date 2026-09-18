@@ -12,6 +12,7 @@ namespace Application.Interfaces
     {
         DbSet<Product> Product { get; set; }
         DbSet<Customer> Customer { get; set; }
+        DbSet<CustomerAddress> CustomerAddresses { get; set; }
         DbSet<Category> Category { get; set; }
         DbSet<Brand> Brand { get; set; }
         DbSet<Order> Order { get; set; }

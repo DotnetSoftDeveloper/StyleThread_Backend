@@ -17,6 +17,28 @@ namespace Domain.Entities
         public required string FirstName { get; set; }
         public string? LastName { get; set; }
         public required string Address { get; set; }
+        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; } = new List<CustomerAddress>();
+    }
+
+    public class CustomerAddress
+    {
+        public int CustomerAddressId { get; set; }
+        public int CustomerId { get; set; }
+        public required string FullName { get; set; }
+        public required string Phone { get; set; }
+        public required string Pincode { get; set; }
+        public required string Locality { get; set; }
+        public required string AddressLine1 { get; set; }
+        public required string City { get; set; }
+        public required string State { get; set; }
+        public string? Landmark { get; set; }
+        public string? AlternatePhone { get; set; }
+        public required string LocationTypeTag { get; set; }
+        public bool IsDefault { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public virtual Customer Customer { get; set; }
     }
 
     public class Product

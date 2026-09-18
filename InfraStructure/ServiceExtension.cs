@@ -27,19 +27,7 @@ namespace InfraStructure
 
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-             .AddJwtBearer(options =>
-             {
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidIssuer = "SACHIN", // Match your issuer
-                     ValidateAudience = false, // You can customize this
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("THISISMYJSONWEBTOKENSOITSMYCHOICE"))
-                 };
-             });
+
 
             services.AddIdentity<Customer, Role>(options =>
             {
@@ -55,7 +43,36 @@ namespace InfraStructure
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders(); // Needed for email confirmation, password reset
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = "SACHIN",
 
+        ValidateAudience = false,
+
+        ValidateLifetime = true,
+
+        ValidateIssuerSigningKey = true,
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(
+                "THISISMYJSONWEBTOKENSOITSMYCHOICE"
+            )
+        ),
+
+        RoleClaimType = "role"
+    };
+});
+
+            services.AddAuthorization();
             services.AddTransient<IUserService, UserService>();
 
             services.Configure<DataProtectionTokenProviderOptions>(opt =>

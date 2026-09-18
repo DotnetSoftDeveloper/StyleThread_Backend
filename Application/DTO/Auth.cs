@@ -28,6 +28,24 @@ namespace Application.DTO
             public required string Address { get; set; }
             public required string PhoneNumber { get; set; }
         }
+
+        public class CustomerAddressDto
+        {
+            public int CustomerAddressId { get; set; }
+            public int CustomerId { get; set; }
+            public required string FullName { get; set; }
+            public required string Phone { get; set; }
+            public required string Pincode { get; set; }
+            public required string Locality { get; set; }
+            public required string AddressLine1 { get; set; }
+            public required string City { get; set; }
+            public required string State { get; set; }
+            public string? Landmark { get; set; }
+            public string? AlternatePhone { get; set; }
+            public required string LocationTypeTag { get; set; }
+            public bool IsDefault { get; set; }
+        }
+
         public class GenericResponse<TResponse>
         {
             public string? Message { get; set; }
